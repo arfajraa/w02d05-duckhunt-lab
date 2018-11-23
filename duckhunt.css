@@ -25,3 +25,16 @@ body, html {
 .duck.flap {
   background-position: -430px -160px;
 }
+
+
+.shot{
+  background-image: url(images/shot.png);
+  background-repeat: none;
+  width: 75px;
+  height: 80px;
+  background-size: cover;
+}
+
+.swal-modal {
+  width: 460px;
+}
