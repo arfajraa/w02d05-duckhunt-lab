@@ -1,6 +1,6 @@
 $(document).ready(function () {
-  var playerName;
-  var difficulty;
+  var playerName = "ali";
+  var difficulty = 5000;
 
   swal("Please enter your name:", {
     content: "input",
@@ -53,35 +53,63 @@ $(document).ready(function () {
 
         // 1. Can you create a <div> with the class "duck" and name it "duck"
         function createDuck() {
-          var $newDiv = $("<div/>").addClass("duck");
+          var $newDiv = $("<div/>").addClass("duck leftDuck");
           $newDiv.css({
             "top": `${getRandPos()}%`,
             "left": `${getRandPos()}%`
           })
-          $body.append($newDiv);
 
-          var flapInterval = window.setInterval(function () {
-            $newDiv.toggleClass("flap");
-          }, 250)
+          window.setTimeout(function () {
+            var topRand = getRandPos();
+            var leftRand = getRandPos();
 
-          var animateInterval = window.setInterval(function () {
+
+            if (($newDiv.position().left / $newDiv.parent().height() * 100) < leftRand) {
+
+              $newDiv.removeClass("rightDuck");
+              $newDiv.addClass("leftDuck");
+              flapLeft = setInterval(function () {
+                $newDiv.toggleClass("leftFlap");
+              }, 250)
+              window.setTimeout(function () {
+                window.clearInterval(flapLeft);
+              }, 1000)
+            }
+            else {
+              $newDiv.removeClass("leftDuck");
+              $newDiv.addClass("rightDuck");
+
+              flapRight = setInterval(function () {
+                $newDiv.toggleClass("rightFlap");
+              }, 250)
+              window.setTimeout(function () {
+                window.clearInterval(flapRight);
+              }, 1000)
+            }
 
             $newDiv.animate({
-              "top": `${getRandPos()}%`,
-              "left": `${getRandPos()}%`
-            }, 500);
+              "top": `${topRand}%`,
+              "left": `${leftRand}%`
+            }, 1000);
 
-          }, 1000)
+          }, 10)
+
+
+
+          var flapRight;
+          var flapLeft;
 
           $newDiv.on("click", function () {
+            console.log("CLICKED!");
 
-            window.clearInterval(flapInterval);
+            window.clearInterval(flapLeft);
+            window.clearInterval(flapRight);
             window.clearInterval(animateInterval);
 
             $newDiv.addClass("shot");
 
             // $newDiv.finish();
-            $newDiv.stop(true, false)
+            $newDiv.stop(true, false);
             // $newDiv.clearQueue();
             // $newDiv.hide();
             // $newDiv.fadeIn(100);
@@ -92,27 +120,88 @@ $(document).ready(function () {
 
             window.setTimeout(function () {
               $newDiv.remove();
-            }, 100)
+              checkForWinner();
+            }, 1000)
+
+            
 
           });
+
+          $body.append($newDiv);
+
+
+          var animateInterval = window.setInterval(function () {
+            var topRand = getRandPos();
+            var leftRand = getRandPos();
+            // var topDiff = Math.abs($newDiv.position().top - topRand);
+            // var leftDiff = Math.abs($newDiv.position().left - leftRand);
+            // var speedModifier = ((topDiff + leftDiff) / 2) * 100;
+            // console.log($newDiv.position().left)
+
+
+            if (($newDiv.position().left / $newDiv.parent().height() * 100) < leftRand) {
+
+              // console.log("animateInterval IF")
+
+              // window.clearInterval(flapRight);
+
+              // $newDiv.removeClass("flapRight");
+              // $newDiv.css("background-position", "-200px -160px");
+              $newDiv.removeClass("rightDuck");
+              $newDiv.addClass("leftDuck");
+              flapLeft = setInterval(function () {
+                $newDiv.toggleClass("leftFlap");
+              }, 250)
+              window.setTimeout(function () {
+                window.clearInterval(flapLeft);
+              }, 1000)
+            }
+            else {
+              // console.log("animateInterval ELSE")
+
+              // window.clearInterval(flapLeft);
+
+              // $newDiv.removeClass("flapLeft");
+
+              // $newDiv.css("background-position", "-100px -160px");
+              $newDiv.removeClass("leftDuck");
+              $newDiv.addClass("rightDuck");
+
+              flapRight = setInterval(function () {
+                $newDiv.toggleClass("rightFlap");
+              }, 250)
+              window.setTimeout(function () {
+                window.clearInterval(flapRight);
+              }, 1000)
+            }
+
+            $newDiv.animate({
+              "top": `${topRand}%`,
+              "left": `${leftRand}%`
+            }, 500);
+
+          }, 1500)
+
+
         }
 
         function getRandPos() {
           return Math.random() * 100;
         }
 
-        // function getWidthDirection(){
-        //   return Math.random() * window.innerHeight;
-        // }
-
-        // function getHeightDirection(){
-        //   return Math.random() * window.innerWidth;
-        // }
+        /* function getWidthDirection() {
+          return Math.random() * window.innerHeight;
+        }
+      
+        function getHeightDirection() {
+          return Math.random() * window.innerWidth;
+        } */
 
         // console.log(getHeightDirection());
 
         for (var i = 0; i < 5; i++) {
-          createDuck();
+          var randTime = Math.random() * 2000;
+          window.setTimeout(createDuck, randTime);
         }
 
         var addDuckInterval = window.setInterval(function () {
@@ -126,21 +215,23 @@ $(document).ready(function () {
         }, difficulty)
 
         function checkForWinner() {
-          // console.log("In checkForWinner");
+          console.log("In checkForWinner");
           if ($body.children().length == 1) {
             if (playerName == null) {
-              window.clearInterval(winInterval);
-              window.alert(`Congratulations, you have mastered duck hunting.`);
+              // window.clearInterval(winInterval);
+              // window.alert(`Congratulations, you have mastered duck hunting.`);
+              swal("Congratulations, you have mastered duck hunting.");
             }
             else {
               // console.log("checkWin else")
-              window.clearInterval(winInterval);
-              window.alert(`Congratulations ${playerName}, you have mastered duck hunting.`);
+              // window.clearInterval(winInterval);
+              // window.alert(`Congratulations ${playerName}, you have mastered duck hunting.`);
+              swal(`Congratulations ${playerName}, you have mastered duck hunting.`);
             }
           }
         }
 
-        var winInterval = window.setInterval(checkForWinner, 50);
+        // var winInterval = window.setInterval(checkForWinner, 100);
 
 
         // 2. Next, use setInterval to toggle the "flap" class on the duck every 250 ms (1/4 second)
@@ -161,7 +252,7 @@ $(document).ready(function () {
         // 7. Now, let's create lots of ducks!  Use a "for" loop to create 5 ducks
         //    using our fancy new createDuck() function
 
-        // 8a. If you go to the dev tools you’ll see that we made 5 ducks, but they are all in the same place! Modify createDuck so 
+        // 8a. If you go to the dev tools you'll see that we made 5 ducks, but they are all in the same place! Modify createDuck so 
         // each time it creates a duck, it appears in a random location. 
         // 8b. The ducks should also move to a random location after 1 second
         // HINT: Use Math.random() * window.innerWidth    for "left"
@@ -198,4 +289,3 @@ $(document).ready(function () {
   // - jQuery will call it when the page is loaded
 
   // first lets grab the <body></body>
-
